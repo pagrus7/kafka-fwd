@@ -1,0 +1,24 @@
+kafka:
+  # kafka client config, more at https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
+  # common is shared b/w producer and consumer
+  common:
+    bootstrap.servers: localhost:9092
+
+  # producer-specific
+  producer:
+  #  enable.idempotence: true        << enforced by the tool, no need to specify
+
+  # consumer-specific
+  consumer:
+    group.id: kafka-forward
+    auto.offset.reset: earliest
+  # enable.auto.commit: true         << enforced by the tool, no need to specify
+  # enable.auto.offset.store: false  << enforced by the tool, no need to specify
+
+# forward routes - one per source topic
+forward:
+  src-topic-name:
+    to: dest-topic-name
+    delay: 1s             # optional, default is 0. Ex: "5s", "2h45m". More at https://pkg.go.dev/time#ParseDuration
+    pause-threshold: 500  # optional, default is 100
+    resume-threshold: 20  # optional, default is 10
