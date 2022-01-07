@@ -2,7 +2,23 @@ name: GitHub build
 on: [ push ]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [ linux ]
+        run-on: [ ubuntu-latest ]
+        arch: [ amd64 ]
+        include:
+          - os: darwin
+            run-on: macos-latest
+            arch: amd64
+
+    name: ${{ matrix.os }}-${{ matrix.arch }}
+    runs-on: ${{ matrix.run-on }}
+    env:
+      GOOS: ${{ matrix.os }}
+      GOARCH: ${{ matrix.arch }}
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -11,5 +27,8 @@ jobs:
       - run: go install golang.org/dl/go1.18beta1@latest
       - run: go1.18beta1 download
       - run: go1.18beta1 build
-      - run: ls -l
-
+      - run: tar -zcf kafka-fwd.tgz kafka-fwd kfwd-conf.yaml
+      - uses: actions/upload-artifact@v2
+        with:
+          name: kafka-fwd-${{ matrix.os }}-${{ matrix.arch }}.tgz
+          path: ./kafka-fwd.tgz
