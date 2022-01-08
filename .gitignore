@@ -1,3 +1,5 @@
 kafka-fwd
 .idea/
 *.iml
+
+*.tgz
