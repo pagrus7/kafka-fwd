@@ -25,19 +25,33 @@ jobs:
     env:
       GOOS: ${{ matrix.os }}
       GOARCH: ${{ matrix.arch }}
-      KFWD_VER: ${{ github.ref }}
 
     steps:
+      - name: Extract tag name as version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
         with:
           go-version: 1.16.1
-      - run: go install golang.org/dl/go1.18beta1@latest
-      - run: go1.18beta1 download
-      - run: go1.18beta1 build
-      - run: tar -zcf "kafka-fwd-$GOOS-$GOARCH-$KFWD_VER.tgz" kafka-fwd kfwd-conf.yaml
+
+      - name: Build with go 1.18
+        run: |
+          go install golang.org/dl/go1.18beta1@latest
+          go1.18beta1 download
+          go1.18beta1 build
+
+      - name: Assemble distro
+        env:
+          KFWD_VER: ${{ steps.get_version.outputs.VERSION }}
+        run: tar -zcf "kafka-fwd-$KFWD_VER-$GOOS-$GOARCH.tgz" kafka-fwd kfwd-conf.yaml
+
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "*.tgz"
-          bodyFile: "CHANGELOG.md"
+          artifactContentType: application/gzip
+          bodyFile: CHANGELOG.md
           token: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          replacesArtifacts: true
