@@ -20,5 +20,5 @@ forward:
   src-topic-name:
     to: dest-topic-name
     delay: 1s             # optional, default is 0. Ex: "5s", "2h45m". More at https://pkg.go.dev/time#ParseDuration
-    pause-threshold: 500  # optional, default is 100
-    resume-threshold: 20  # optional, default is 10
+    pause-threshold: 100  # optional, applies per-partition, default is 100
+    resume-threshold: 10  # optional, applies per-partition, default is 10

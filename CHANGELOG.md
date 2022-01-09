@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changes
+- Minor changes for the default config
+
 ## 0.10.0
 Initial release
 ### Added
