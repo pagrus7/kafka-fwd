@@ -138,7 +138,8 @@ func (r *Route) processNow(ctx context.Context, msg *kafka.Message) {
 		default:
 			r.logger.Debugf("Forwarding message %v", msg.TopicPartition)
 			if err := r.kafkaOps.forwardAsync(msg, r.def.To); err != nil {
-				r.logger.Infof("Error producing message, will retry: %s", err.Error())
+				r.logger.Infof("Error producing message, will retry in 200 ms: %s", err.Error())
+				time.Sleep(time.Duration(200 * time.Millisecond))
 			} else {
 				return
 			}
