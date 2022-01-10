@@ -12,10 +12,12 @@ jobs:
         os: [ linux ]
         run-on: [ ubuntu-latest ]
         arch: [ amd64 ]
+        docker: [ true ]
         include:
           - os: darwin
             run-on: macos-latest
             arch: amd64
+            docker: false
 
     name: ${{ matrix.os }}-${{ matrix.arch }}
     runs-on: ${{ matrix.run-on }}
@@ -55,3 +57,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           allowUpdates: true
           replacesArtifacts: true
+
+      - name: Build docker image
+        if: ${{ matrix.docker == true }}
+        uses: manusa/actions-publish-docker@v1.1.2
+        with:
+          name: pagrus/kafka-fwd
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}

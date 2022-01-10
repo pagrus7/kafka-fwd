@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- Ubuntu-based docker image
+
 ### Changes
 - 200ms delay b/w retries if can't enqueue producer message
 - Minor changes for the default config
